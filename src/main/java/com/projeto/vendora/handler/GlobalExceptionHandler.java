@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ProblemDetail handleResourceNotFound(ResourceNotFoundException ex) {
-        return  buildProblem(HttpStatus.NOT_FOUND, "Resource not found!", ex.getMessage());
+        return buildProblem(HttpStatus.NOT_FOUND, "Resource not found!", ex.getMessage());
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
