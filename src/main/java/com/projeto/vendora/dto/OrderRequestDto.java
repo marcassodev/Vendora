@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.UUID;
 
 public record OrderRequestDto(
-        @NotNull(message = "O id do cliente é obrigatório")
+        @NotNull(message = "Client Id is necessary")
         UUID buyerId,
-        @NotEmpty(message = "O pedido deve ter pelo menos um item")
+        @NotEmpty(message = "The order needs at least one product")
         @Valid
         List<OrderItemRequestDto> items,
-        @NotNull(message = "A forma de pagamento é obrigatória")
+        @NotNull(message = "Payment method is necessary")
         PaymentMethod paymentMethod
 ) {}

@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND,
                 ex.getMessage()
         );
-        problemDetail.setTitle("Recurso Não Encontrado!");
+        problemDetail.setTitle("Resource not found!");
         problemDetail.setProperty("timestamp", Instant.now());
 
         return problemDetail;
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT,
                 ex.getMessage()
         );
-        problemDetail.setTitle("Conflito de Email");
+        problemDetail.setTitle("Email conflict");
         problemDetail.setProperty("timestamp", Instant.now());
 
         return problemDetail;
@@ -48,10 +48,10 @@ public class GlobalExceptionHandler {
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.BAD_REQUEST,
-                "O parâmetro'" + ex.getName()
-                + "' recebeu um tipo de valor inválido. Era esperado um valor do tipo " +requiredType + "."
+                "The parameter'" + ex.getName()
+                + "'  received an invalid value. The expected type is " +requiredType + "."
         );
-        problemDetail.setTitle("Tipo de Parâmetro Inválido");
+        problemDetail.setTitle("Invalid parameter type");
         problemDetail.setProperty("timestamp" , Instant.now());
 
         return problemDetail;
@@ -61,9 +61,9 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleGlobalException(Exception ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "Ocorreu um erro interno inesperado no servidor. Por favor, tente novamente mais tarde."
+                "Internal server error."
         );
-        problemDetail.setTitle("Erro Interno do Servidor");
+        problemDetail.setTitle("Internal server error");
         problemDetail.setProperty("timestamp", Instant.now());
 
         return problemDetail;
@@ -73,16 +73,16 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleValidationError(MethodArgumentNotValidException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.BAD_REQUEST,
-                "Um ou mais campos estão inválidos. Faça a correção e tente novamente."
+                "One or more fields are wrong."
         );
-        problemDetail.setTitle("Erro de Validação");
+        problemDetail.setTitle("Validation error");
 
         Map<String, String> invalidFields = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .collect(Collectors.toMap(
                         FieldError::getField,
-                        error -> error.getDefaultMessage() != null ? error.getDefaultMessage() : "Campo inválido",
+                        error -> error.getDefaultMessage() != null ? error.getDefaultMessage() : "Invalid field",
                         (existingMessage, newMessage) -> existingMessage
                 ));
 

@@ -6,14 +6,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record UserRequestDto(
-        @NotBlank(message = "O nome do usuário é obrigatório")
+        @NotBlank(message = "User name is necessary")
         String name,
-        @Email(message = "Email inválido")
+        @Email(message = "Invalid Email")
         String email,
-        @NotBlank(message = "A senha é obrigatória")
+        @NotBlank(message = "Password is necessary")
         String password,
-        @NotBlank(message = "O telefone é obrigatório")
+        @NotBlank(message = "Phone is necessary")
         String phone,
-        @NotNull(message = "O tipo de usuário é obrigatório")
+        @NotNull(message = "User type is necessary")
         UserType userType
 ) {}

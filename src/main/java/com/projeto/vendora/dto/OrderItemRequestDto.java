@@ -7,10 +7,10 @@ import java.util.UUID;
 
 public record OrderItemRequestDto(
 
-        @NotNull(message = "O id do produto é obrigatório")
+        @NotNull(message = "Id product necessary")
         UUID productId,
 
-        @NotNull(message = "A quantidade é obrigatória")
-        @Min(value = 1, message = "A quantidade mínima é 1")
+        @NotNull(message = "Quantity value is necessary")
+        @Min(value = 1, message = "The minimum quantity is 1")
         Integer quantity
 ) {}
