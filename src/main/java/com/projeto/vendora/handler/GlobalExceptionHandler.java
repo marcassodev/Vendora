@@ -17,65 +17,43 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ProblemDetail handleResourceNotFound(ResourceNotFoundException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.NOT_FOUND,
-                ex.getMessage()
+    private ProblemDetail buildProblem(HttpStatus status, String title, String detail) {
+        var problemDetail = ProblemDetail.forStatusAndDetail(
+                status,
+                detail
         );
-        problemDetail.setTitle("Resource not found!");
+
         problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setTitle(title);
 
         return problemDetail;
+    }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ProblemDetail handleResourceNotFound(ResourceNotFoundException ex) {
+        return  buildProblem(HttpStatus.NOT_FOUND, "Resource not found!", ex.getMessage());
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ProblemDetail handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.CONFLICT,
-                ex.getMessage()
-        );
-        problemDetail.setTitle("Email conflict");
-        problemDetail.setProperty("timestamp", Instant.now());
-
-        return problemDetail;
+        return buildProblem(HttpStatus.CONFLICT, "Email already exists!", ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException ex){
         String requiredType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "desconhecido";
-
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST,
-                "The parameter'" + ex.getName()
-                + "'  received an invalid value. The expected type is " +requiredType + "."
-        );
-        problemDetail.setTitle("Invalid parameter type");
-        problemDetail.setProperty("timestamp" , Instant.now());
-
-        return problemDetail;
+        return buildProblem(HttpStatus.BAD_REQUEST,"Invalid parameter type", "The parameter'" + ex.getName()
+                + "'  received an invalid value. The expected type is " +requiredType );
     }
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGlobalException(Exception ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "Internal server error."
-        );
-        problemDetail.setTitle("Internal server error");
-        problemDetail.setProperty("timestamp", Instant.now());
-
-        return problemDetail;
+        return buildProblem(HttpStatus.INTERNAL_SERVER_ERROR, "Intenal Server error",  ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationError(MethodArgumentNotValidException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST,
-                "One or more fields are wrong."
-        );
-        problemDetail.setTitle("Validation error");
+        var problemDetail = buildProblem(HttpStatus.BAD_REQUEST, "Validation Error", ex.getMessage());
 
         Map<String, String> invalidFields = ex.getBindingResult()
                 .getFieldErrors()
@@ -87,9 +65,7 @@ public class GlobalExceptionHandler {
                 ));
 
         problemDetail.setProperty("invalid_fields", invalidFields);
-        problemDetail.setProperty("timestamp", Instant.now());
 
         return problemDetail;
     }
-
 }
