@@ -1,7 +1,9 @@
 package com.projeto.vendora.handler;
 
 import com.projeto.vendora.exception.EmailAlreadyExistsException;
+import com.projeto.vendora.exception.ProductAlreadyExistsException;
 import com.projeto.vendora.exception.ResourceNotFoundException;
+import com.projeto.vendora.exception.UnauthorizedSellerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
@@ -39,16 +41,26 @@ public class GlobalExceptionHandler {
         return buildProblem(HttpStatus.CONFLICT, "Email already exists!", ex.getMessage());
     }
 
+    @ExceptionHandler(ProductAlreadyExistsException.class)
+    public ProblemDetail handleProductAlreadyExists(ProductAlreadyExistsException ex) {
+        return buildProblem(HttpStatus.CONFLICT, "Product already exists!", ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedSellerException.class)
+    public ProblemDetail handleUnauthorizedSeller(UnauthorizedSellerException ex) {
+        return buildProblem(HttpStatus.UNAUTHORIZED, "Unauthorized Seller!", ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException ex){
-        String requiredType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "desconhecido";
+        String requiredType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "Unknown";
         return buildProblem(HttpStatus.BAD_REQUEST,"Invalid parameter type", "The parameter'" + ex.getName()
                 + "'  received an invalid value. The expected type is " +requiredType );
     }
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGlobalException(Exception ex) {
-        return buildProblem(HttpStatus.INTERNAL_SERVER_ERROR, "Intenal Server error",  ex.getMessage());
+        return buildProblem(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server error",  ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
