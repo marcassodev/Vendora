@@ -37,14 +37,14 @@ public class ProductService {
         return productRepository.findById(id)
                 .map(this::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "O produto com o ID " + id + " não foi encontrado"));
+                        "The product with ID " + id + " was not found."));
     }
 
     @Transactional(readOnly = true)
     public List<ProductResponseDto> findBySellerId(UUID sellerId) {
         if (!userRepository.existsById(sellerId)) {
             throw new ResourceNotFoundException(
-                    "Vendedor não encontrado com o ID: " + sellerId);
+                    "The seller was not found with the ID: " + sellerId);
         }
         return productRepository.findBySellerId(sellerId)
                 .stream()
@@ -56,15 +56,15 @@ public class ProductService {
     public ProductResponseDto save(ProductRequestDto productRequestDto) {
         if (productRepository.existsByNameIgnoreCase(productRequestDto.name())) {
             throw new ProductAlreadyExistsException(
-                    "O produto '" + productRequestDto.name() + "' já está cadastrado");
+                    "The product '" + productRequestDto.name() + " is already registered.");
         }
         UserEntity seller = userRepository.findById(productRequestDto.sellerId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Usuário não encontrado com o ID: " + productRequestDto.sellerId()));
+                        "User not found with ID: " + productRequestDto.sellerId()));
 
         if (seller.getUserType() != UserType.SELLER) {
             throw new UnauthorizedSellerException(
-                    "O usuário informado não é um vendedor");
+                    "The specified user is not a seller");
         }
 
         ProductEntity newProduct = ProductEntity.builder()
@@ -83,21 +83,21 @@ public class ProductService {
     public ProductResponseDto update(UUID id, ProductRequestDto productRequestDto) {
         ProductEntity existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Produto com o ID " + id + " não foi encontrado"));
+                        "Product with ID " + id + " was not found"));
 
         if (!existingProduct.getName().equals(productRequestDto.name()) &&
                 productRepository.existsByNameIgnoreCase(productRequestDto.name())) {
             throw new ProductAlreadyExistsException(
-                    "O produto '" + productRequestDto.name() + "' já foi cadastrado");
+                    "The product '" + productRequestDto.name() + "' is already registered");
         }
 
         UserEntity seller = userRepository.findById(productRequestDto.sellerId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Usuário não encontrado com o ID: " + productRequestDto.sellerId()));
+                        "User not found with the ID: " + productRequestDto.sellerId()));
 
         if (seller.getUserType() != UserType.SELLER) {
             throw new UnauthorizedSellerException(
-                    "O usuário informado não é um vendedor");
+                    "The specified user is not a seller");
         }
 
         existingProduct.setName(productRequestDto.name());
@@ -114,7 +114,7 @@ public class ProductService {
     public void delete(UUID id) {
         if (!productRepository.existsById(id)) {
             throw new ResourceNotFoundException(
-                    "Produto com o ID " + id + " não foi encontrado");
+                    "Product with ID " + id + " was not found");
         }
 
         productRepository.deleteById(id);
